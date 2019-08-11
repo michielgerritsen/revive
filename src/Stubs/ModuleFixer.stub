@@ -1,0 +1,40 @@
+<?php
+
+require '{$autoloadPath}';
+
+$class = new \ReflectionClass('{$class}');
+$arguments = $class->getConstructor()->getParameters();
+
+$xml = simplexml_load_file('{$diPath}');
+
+$child = $xml->addChild('type');
+$child->addAttribute('name', '{$class}');
+
+$argumentsNode = $child->addChild('arguments');
+
+function getParameterClassName(ReflectionParameter $param) {
+    preg_match('/<required>(.*) \$/s', $param->__toString(), $matches);
+
+    return isset($matches[1]) ? trim($matches[1]) : null;
+}
+
+/** @var \ReflectionParameter $param */
+foreach($arguments as $param) {
+    $className = getParameterClassName($param);
+    if (!$className) {
+        continue;
+    }
+
+    $argumentNode = $argumentsNode->addChild('argument', $className . '\Proxy');
+    $argumentNode->addAttribute('name', $param->name);
+    $argumentNode->addAttribute('xsi:type', 'object', 'http://www.w3.org/2001/XMLSchema-instance');
+}
+
+$arguments = ['directory' => 'path/to/directory', 'folder' => 'path/to/folder/class'];
+
+$dom = new \DOMDocument('1.0');
+$dom->preserveWhiteSpace = false;
+$dom->formatOutput = true;
+$dom->loadXML($xml->asXML());
+
+$dom->save('{$diPath}');
