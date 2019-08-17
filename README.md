@@ -2,7 +2,7 @@
 
 Got a Magento 2 store where the integration test always fails with some database errors? You can do an attempt to fix them manually by [following this blogpost](https://www.michiel-gerritsen.com/debugging-the-magento-2-integration-test-setup/), or use this tool. This tried to find the root cause of why your tests are failing and apply a fix for them.
 
-![Creation example](../images/revive-example.gif?raw=true)
+![Revive in action](../images/revive-demo.gif?raw=true)
 
 ## What's in the name?
 
