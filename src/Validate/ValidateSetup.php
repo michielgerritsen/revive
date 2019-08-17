@@ -21,6 +21,7 @@ namespace MichielGerritsen\Revive\Validate;
 use MichielGerritsen\Revive\Exceptions\InvalidConfigurationException;
 use MichielGerritsen\Revive\FileSystem\CurrentWorkingDirectory;
 use MichielGerritsen\Revive\Validate\Validators\ValidatorContract;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ValidateSetup
 {
@@ -33,6 +34,11 @@ class ValidateSetup
      * @var ValidatorContract[]
      */
     private $validators = [];
+
+    /**
+     * @var array
+     */
+    private $errors = [];
 
     public function __construct(
         CurrentWorkingDirectory $directory,
@@ -48,10 +54,25 @@ class ValidateSetup
 
         foreach ($this->validators as $validator) {
             if (!$validator->validate()) {
+                $this->addErrors($validator->getErrors());
                 $result = false;
+
+                if (!$validator->shouldContinue()) {
+                    break;
+                }
             }
         }
 
         return $result;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    private function addErrors(array $errors)
+    {
+        $this->errors = array_merge($this->errors, $errors);
     }
 }

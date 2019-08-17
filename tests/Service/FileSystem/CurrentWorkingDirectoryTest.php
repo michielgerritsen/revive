@@ -28,6 +28,8 @@ class CurrentWorkingDirectoryTest extends TestCase
 {
     public function testWeCanSetTheDirectory()
     {
+        container()->flush();
+
         /** @var CurrentWorkingDirectory $instance */
         $instance = container()->make(CurrentWorkingDirectory::class);
 

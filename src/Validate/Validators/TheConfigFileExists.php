@@ -33,8 +33,21 @@ class TheConfigFileExists implements ValidatorContract
         $this->directory = $directory;
     }
 
+    public function shouldContinue(): bool
+    {
+        return false;
+    }
+
     public function validate(): bool
     {
         return file_exists($this->directory->get() . '/dev/tests/integration/etc/install-config-mysql.php');
+    }
+
+    public function getErrors(): array
+    {
+        return [
+            'The `dev/tests/integration/etc/install-config-mysql.php` file is missing. See this page on how to prepare to run the ' .
+            'integration tests: https://devdocs.magento.com/guides/v2.3/test/integration/integration_test_execution.html'
+        ];
     }
 }

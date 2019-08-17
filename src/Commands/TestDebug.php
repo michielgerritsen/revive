@@ -18,16 +18,16 @@
 
 namespace MichielGerritsen\Revive\Commands;
 
-use MichielGerritsen\Revive\Exceptions\FailingForUnknownReason;
-use MichielGerritsen\Revive\Exceptions\InstanceFailingException;
 use MichielGerritsen\Revive\Magento\ErrorOutput;
-use MichielGerritsen\Revive\Magento\FixModule;
-use MichielGerritsen\Revive\Magento\IntegrationTests;
 use MichielGerritsen\Revive\Magento\ModuleManager;
 use MichielGerritsen\Revive\FileSystem\CurrentWorkingDirectory;
+use MichielGerritsen\Revive\Magento\TestRunner;
+use MichielGerritsen\Revive\Validate\ValidateSetup;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Terminal;
 
 class TestDebug extends Command
 {
@@ -44,46 +44,57 @@ class TestDebug extends Command
     private $moduleManager;
 
     /**
-     * @var FixModule
-     */
-    private $fixModule;
-
-    /**
-     * @var IntegrationTests
-     */
-    private $integrationTests;
-
-    /**
      * @var ErrorOutput
      */
     private $errorOutput;
 
+    /**
+     * @var ValidateSetup
+     */
+    private $validateSetup;
+
+    /**
+     * @var TestRunner
+     */
+    private $testRunner;
+
     public function __construct(
         CurrentWorkingDirectory $directory,
         ModuleManager $moduleManager,
-        FixModule $fixModule,
-        IntegrationTests $integrationTests,
-        ErrorOutput $errorOutput
+        ErrorOutput $errorOutput,
+        ValidateSetup $validateSetup,
+        TestRunner $testRunner
     ) {
         parent::__construct();
 
         $this->directory = $directory;
         $this->moduleManager = $moduleManager;
-        $this->fixModule = $fixModule;
-        $this->integrationTests = $integrationTests;
         $this->errorOutput = $errorOutput;
+        $this->validateSetup = $validateSetup;
+        $this->testRunner = $testRunner;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->directory->setFromInput($input);
 
-        // Validate installation.
+        $io = new SymfonyStyle($input, $output);
 
-        // Tests dependencies
+        // Validate installation.
+        if (!$this->validateSetup->validate()) {
+            $width = (new Terminal())->getWidth();
+
+            $message = 'There are some errors found, please fix these before continuing:';
+
+            $output->writeln('');
+            $output->writeln('<error>' . str_repeat(' ', $width) . '</error>');
+            $output->writeln('<error>  ' . $message . str_repeat(' ', $width - strlen($message) - 2) . '</error>');
+            $output->writeln('<error>' . str_repeat(' ', $width) . '</error>');
+            $io->listing($this->validateSetup->getErrors($output));
+            return 255;
+        }
 
         // Place our code to read the exceptions.
-
         $output->writeln('<info>Patching your Magento installation</info>');
         $this->errorOutput->patch();
 
@@ -91,55 +102,15 @@ class TestDebug extends Command
         $this->moduleManager->createIntegrationTestModule();
 
         // Run the installation.
+        $output->writeln('<info>You installation is verified. We are now starting the first run. This can take quite a while.</info>');
 
-        $runs = 0;
-        $failingInstance = null;
-        while (true) {
-            if (!$output->isVeryVerbose()) {
-                $this->integrationTests->run();
-            } else {
-                $this->integrationTests->runVerbose($output);
-            }
-
-            if ($this->integrationTests->wasRunSuccessful()) {
-                break;
-            }
-
-            $currentFailingInstance = $this->integrationTests->getFailingInstance();
-
-            if ($currentFailingInstance && $currentFailingInstance == $failingInstance) {
-                $output->writeln($this->integrationTests->getLogs());
-
-                throw InstanceFailingException::withInstance($failingInstance);
-            }
-
-            if (!$currentFailingInstance) {
-                throw new FailingForUnknownReason(
-                    'It looks like there are no instances that are failing (anymore), but the test command still ' .
-                    ' fails for unknown reasons. Usually this is caused by setup scripts that are failing'
-                );
-            }
-
-            $this->fixModule->proxyDependenciesFor($currentFailingInstance);
-
-            $output->writeln('Run #' . ++$runs);
-
-            if ($runs == 20) {
-                $output->writeln($this->integrationTests->getLogs());
-
-                $output->writeln(
-                    '<error>We tried to run the tests 20 times but without success. Please check the logs ' .
-                    'to see what is going on. If they look good just try again</error>'
-                );
-                break;
-            }
+        try {
+            $this->testRunner->execute($output);
+        } finally {
+            // Fix our manual fixes.
+            $this->errorOutput->undo();
         }
 
-        // Fix our manual fixes.
-        $this->errorOutput->undo();
-
-        // Remove the modules created by Magento.
-
-        $output->writeln('<error>Shut it down</error>');
+        $io->success('It looks like we succefully did a test run. Now go and build something awesome!');
     }
 }

@@ -20,7 +20,6 @@ namespace MichielGerritsen\Revive\Test\Validate\Validators;
 
 use MichielGerritsen\Revive\FileSystem\CurrentWorkingDirectory;
 use MichielGerritsen\Revive\Test\Fakes\CurrentWorkingDirectoryFake;
-use MichielGerritsen\Revive\Validate\ValidateSetup;
 use MichielGerritsen\Revive\Validate\Validators\PhpUnitFileExists;
 use PHPUnit\Framework\TestCase;
 
@@ -52,5 +51,23 @@ class PhpUnitFileExistsTest extends TestCase
         $instance = container()->make(PhpUnitFileExists::class);
 
         $this->assertTrue($instance->validate());
+    }
+
+    public function testGetErrors()
+    {
+        /** @var PhpUnitFileExists $instance */
+        $instance = container()->make(PhpUnitFileExists::class);
+
+        $errors = $instance->getErrors();
+
+        $this->assertContains(
+            'The `dev/tests/integration/phpunit.xml` file is missing.',
+            $errors[0]
+        );
+    }
+
+    public function testShouldContinue()
+    {
+        $this->assertTrue(container()->make(PhpUnitFileExists::class)->shouldContinue());
     }
 }

@@ -44,9 +44,9 @@ class ModuleManager
 
         $modulePath = $this->getPath();
 
-//        if (file_exists($modulePath)) {
-//            return;
-//        }
+        if (file_exists($modulePath)) {
+            return;
+        }
 
         mkdir($modulePath . 'etc/', 0777, true);
         mkdir($modulePath . 'Test/', 0777, true);

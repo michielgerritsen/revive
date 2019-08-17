@@ -73,7 +73,7 @@ class ErrorOutputTest extends TestCase
             file_get_contents($filePath)
         );
 
-        container()->make(ErrorOutput::class)->undo();
+        $instance->undo();
 
         $this->assertNotContains(
             'throw new \Exception(\'Failing command: \' . $key . \' instance: \' . $item[\'instance\'] . \' JSON: \' . json_encode([\'instance\' => $item[\'instance\']]));',

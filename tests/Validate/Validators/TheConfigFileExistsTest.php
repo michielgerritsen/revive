@@ -39,4 +39,22 @@ class TheConfigFileExistsTest extends TestCase
 
         $this->assertTrue($instance->validate());
     }
+
+    public function testGetErrors()
+    {
+        /** @var TheConfigFileExists $instance */
+        $instance = container()->make(TheConfigFileExists::class);
+
+        $errors = $instance->getErrors();
+
+        $this->assertContains(
+            'The `dev/tests/integration/etc/install-config-mysql.php` file is missing.',
+            $errors[0]
+        );
+    }
+
+    public function testShouldContinue()
+    {
+        $this->assertFalse(container()->make(TheConfigFileExists::class)->shouldContinue());
+    }
 }

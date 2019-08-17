@@ -33,6 +33,11 @@ class PhpUnitFileExists implements ValidatorContract
         $this->directory = $directory;
     }
 
+    public function shouldContinue(): bool
+    {
+        return true;
+    }
+
     public function validate(): bool
     {
         $paths = [
@@ -47,5 +52,13 @@ class PhpUnitFileExists implements ValidatorContract
         }
 
         return false;
+    }
+
+    public function getErrors(): array
+    {
+        return [
+            'The `dev/tests/integration/phpunit.xml` file is missing. See this page on how to prepare to run the ' .
+            'integration tests: https://devdocs.magento.com/guides/v2.3/test/integration/integration_test_execution.html'
+        ];
     }
 }

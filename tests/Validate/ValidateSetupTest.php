@@ -46,6 +46,7 @@ class ValidateSetupTest extends TestCase
 
         $this->assertFalse($instance->validate());
     }
+
     public function testSucceedsIfAllValidatorAreValid()
     {
         $validator = $this->createMock(ValidatorContract::class);
@@ -57,5 +58,46 @@ class ValidateSetupTest extends TestCase
         ]);
 
         $this->assertTrue($instance->validate());
+    }
+
+    public function testCollectsErrors()
+    {
+        $validator1 = $this->createMock(ValidatorContract::class);
+        $validator1->method('validate')->willReturn(false);
+        $validator1->method('getErrors')->willReturn(['error 1']);
+        $validator1->method('shouldContinue')->willReturn(true);
+
+        $validator2 = $this->createMock(ValidatorContract::class);
+        $validator2->method('validate')->willReturn(false);
+        $validator2->method('getErrors')->willReturn(['error 2']);
+        $validator2->method('shouldContinue')->willReturn(true);
+
+        container()->flush();
+        $instance = container()->make(ValidateSetup::class, [
+            'validators' => [$validator1, $validator2]
+        ]);
+
+        $instance->validate();
+
+        $this->assertCount(2, $instance->getErrors());
+        $this->assertTrue(in_array('error 1', $instance->getErrors()));
+        $this->assertTrue(in_array('error 2', $instance->getErrors()));
+    }
+
+    public function testSkipTheRestOfTheValidatorsIfNeeded()
+    {
+        $validator1 = $this->createMock(ValidatorContract::class);
+        $validator1->expects($this->once())->method('validate')->willReturn(false);
+        $validator1->method('shouldContinue')->willReturn(false);
+
+        $validator2 = $this->createMock(ValidatorContract::class);
+        $validator2->expects($this->never())->method('validate');
+
+        container()->flush();
+        $instance = container()->make(ValidateSetup::class, [
+            'validators' => [$validator1, $validator2]
+        ]);
+
+        $instance->validate();
     }
 }

@@ -16,13 +16,12 @@
  *
  */
 
-namespace MichielGerritsen\Revive\Validate\Validators;
+namespace MichielGerritsen\Revive\External;
 
-interface ValidatorContract
+class Amqp
 {
-    public function validate(): bool;
-
-    public function shouldContinue(): bool;
-
-    public function getErrors(): array;
+    public function testConnection($host, $port, $user, $pass)
+    {
+        return (bool)file_get_contents('amqp://' . $user . ':' . $pass . '@' . $host . ':' . $port . '/api/whoami');
+    }
 }

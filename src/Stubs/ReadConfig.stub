@@ -16,13 +16,7 @@
  *
  */
 
-namespace MichielGerritsen\Revive\Validate\Validators;
+require 'vendor/autoload.php';
+require 'dev/tests/integration/framework/Magento/TestFramework/Bootstrap.php';
 
-interface ValidatorContract
-{
-    public function validate(): bool;
-
-    public function shouldContinue(): bool;
-
-    public function getErrors(): array;
-}
+echo json_encode(require 'dev/tests/integration/etc/install-config-mysql.php', JSON_PRETTY_PRINT);

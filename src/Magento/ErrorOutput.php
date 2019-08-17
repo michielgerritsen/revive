@@ -58,6 +58,10 @@ class ErrorOutput
 
         $contents = $this->originalContents = file_get_contents($path);
 
+        if (strpos($contents, 'json_encode([\'instance\' => $item[\'instance\']])') !== false) {
+            return;
+        }
+
         $result = str_replace(
             '$array[$key] = $this->objectManager->get($item[\'instance\']);',
             'try {
