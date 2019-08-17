@@ -13,7 +13,7 @@ That's why it's called Revive: It helps you to revive this feeling at the start 
 You have 2 options to use Revive:
 
 - Download `revive.phar` from the [release tab](https://github.com/michielgerritsen/revive/releases).
-- Clone this repository and run `composer install`. You can revive then using `php src/revive.php --root-dir=/path/to/your/magento/installation`. 
+- Clone this repository and run `composer install`. You can then use revive by using `php src/revive.php --root-dir=/path/to/your/magento/installation`. 
 
 ## Testing
 
