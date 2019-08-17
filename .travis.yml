@@ -27,5 +27,6 @@ deploy:
   api_key: $GITHUB_OAUTH_TOKEN
   file: "revive.phar"
   skip_cleanup: true
-#  on:
+  on:
+    php: 7.3
 #    tags: true
