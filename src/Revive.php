@@ -18,21 +18,16 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use MichielGerritsen\Revive\Application\Configure;
+use MichielGerritsen\Revive\Commands\TestDebug;
 use MichielGerritsen\Revive\FileSystem\CurrentWorkingDirectory;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputOption;
 
 container()->singleton(CurrentWorkingDirectory::class);
 
 $application = new Application();
-(new \MichielGerritsen\Revive\Application\Configure())->options($application->getDefinition());
+(new Configure())->options($application->getDefinition());
 
-foreach(glob(__DIR__ . '/Commands/*.php') as $command) {
-    $parts = explode('/', rtrim($command, '.php'));
-    $command = end($parts);
-    $class = '\\MichielGerritsen\\Revive\\Commands\\' . $command;
-
-    $application->add(container()->make($class));
-}
+$application->add(container()->make(TestDebug::class));
 
 $application->run();
