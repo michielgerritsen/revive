@@ -28,6 +28,6 @@ deploy:
   file: "revive.phar"
   skip_cleanup: true
   on:
-    branch: ci
+    all_branches: true
     php: 7.3
 #    tags: true
