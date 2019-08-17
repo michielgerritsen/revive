@@ -8,10 +8,11 @@ php:
 
 before_script:
   - travis_retry composer self-update
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
+  - travis_retry composer install ${COMPOSER_FLAGS} --no-interaction
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+  - composer install ${COMPOSER_FLAGS} --no-interaction --no-dev
   - php CreatePhar.php
 
 cache:
@@ -28,6 +29,5 @@ deploy:
   file: "revive.phar"
   skip_cleanup: true
   on:
-    all_branches: true
+    tags: true
     php: 7.3
-#    tags: true
