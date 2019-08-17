@@ -35,6 +35,7 @@ container()->bind(ValidateSetup::class, function () {
     return new ValidateSetup(
         container()->make(CurrentWorkingDirectory::class),
         [
+            container()->make(\MichielGerritsen\Revive\Validate\Validators\IsMagentoInstallation::class),
             container()->make(\MichielGerritsen\Revive\Validate\Validators\TheConfigFileExists::class),
             container()->make(\MichielGerritsen\Revive\Validate\Validators\PhpUnitFileExists::class),
             container()->make(\MichielGerritsen\Revive\Validate\Validators\MysqlCredentialsAreValid::class),

@@ -29,7 +29,12 @@ class CurrentWorkingDirectory
 
     public function setFromInput(InputInterface $input)
     {
-        $this->directory = $input->getOption('root-dir');
+        if ($rootDir = $input->getOption('root-dir')) {
+            $this->directory = $input->getOption('root-dir');
+            return;
+        }
+
+        $this->directory = getcwd();
     }
 
     public function get()

@@ -107,7 +107,7 @@ class TestDebug extends Command
         try {
             $this->testRunner->execute($output);
         } finally {
-            // Fix our manual fixes.
+            // Undo our manual fixes.
             $this->errorOutput->undo();
         }
 
