@@ -21,7 +21,6 @@ cache:
 matrix:
   allow_failures:
     - php: 7.4snapshot
-      env: KEY=VALUE
 
 deploy:
   provider: releases
