@@ -44,10 +44,14 @@ class TestRunner
 
     public function execute(OutputInterface $output)
     {
-        $runs = 0;
+        $run = 1;
         $failingInstance = null;
         $patchedInstances = [];
         while (true) {
+            $start = microtime(true);
+            $output->writeln('');
+            $output->writeln('Starting run #' . $run);
+
             if (!$output->isVeryVerbose()) {
                 $this->integrationTests->run();
             } else {
@@ -77,16 +81,20 @@ class TestRunner
             }
 
             $this->fixModule->proxyDependenciesFor($currentFailingInstance);
-            $output->writeln('<warning>The class ' . $currentFailingInstance . ' is patched.</warning>');
+            $output->writeln('<info>The class ' . $currentFailingInstance . ' is patched.</info>');
 
-            $output->writeln('Run #' . ++$runs);
+            $end = microtime(true);
+            $execution_time = round(($end - $start) / 60, 2);
 
-            if ($runs == 20) {
+            $output->writeln('Completed run ' . $run . ' in ' . $execution_time . ' minutes');
+            $run++;
+
+            if ($run == 50) {
                 $output->writeln($this->integrationTests->getLogs());
 
                 $output->writeln(
-                    '<error>We tried to run the tests 20 times but without success. Please check the logs ' .
-                    'to see what is going on. If they look good just try again</error>'
+                    '<error>We tried to run the tests 50 times but without success. Please check the logs ' .
+                    'to see what is going on. If they look good just try again.</error>'
                 );
                 break;
             }

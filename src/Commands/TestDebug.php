@@ -31,7 +31,7 @@ use Symfony\Component\Console\Terminal;
 
 class TestDebug extends Command
 {
-    protected static $defaultName = 'revive:test:debug';
+    protected static $defaultName = 'test:debug';
 
     /**
      * @var CurrentWorkingDirectory
@@ -111,6 +111,10 @@ class TestDebug extends Command
             $this->errorOutput->undo();
         }
 
-        $io->success('It looks like we succefully did a test run. Now go and build something awesome!');
+        $io->success(
+            'It looks like we succefully did a test run. We placed some fixes in the ' .
+            '`app/code/MichielGerritsen/ReviveFixes` folder. Please review them and adjust where needed.'
+        );
+        $io->success('Now go and build something awesome!');
     }
 }
