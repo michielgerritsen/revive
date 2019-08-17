@@ -4,6 +4,8 @@ Got a Magento 2 store where the integration test always fails with some database
 
 ![Revive in action](../images/revive-demo.gif?raw=true)
 
+(In this example the error was valid)
+
 ## What's in the name?
 
 We've been all in that place: A shiny new project. You can do everything right this time! But as times goes by and deadlines needs to get meet, testing may not be very high on you priority list. When you finally want to start writing tests it turns out that your test setup is broken.
