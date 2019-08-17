@@ -11,7 +11,7 @@ before_script:
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 cache:
   directories:
