@@ -12,6 +12,7 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+  - php CreatePhar.php
 
 cache:
   directories:
@@ -21,3 +22,11 @@ matrix:
   allow_failures:
     - php: 7.4snapshot
       env: KEY=VALUE
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file: "revive.phar"
+  skip_cleanup: true
+#  on:
+#    tags: true
