@@ -6,7 +6,8 @@
         "illuminate/container": "^5.8",
         "symfony/process": "^4.3",
         "mikey179/vfsstream": "^1.6",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5"

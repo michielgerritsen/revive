@@ -74,6 +74,11 @@ class TestDebug extends Command
         $this->testRunner = $testRunner;
     }
 
+    protected function configure()
+    {
+        $this->setDescription('Find out why your integration tests are failing.');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->directory->setFromInput($input);

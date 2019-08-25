@@ -19,6 +19,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use MichielGerritsen\Revive\Application\Configure;
+use MichielGerritsen\Revive\Commands\DbDump;
 use MichielGerritsen\Revive\Commands\TestDebug;
 use MichielGerritsen\Revive\FileSystem\CurrentWorkingDirectory;
 use Symfony\Component\Console\Application;
@@ -29,5 +30,6 @@ $application = new Application();
 (new Configure())->options($application->getDefinition());
 
 $application->add(container()->make(TestDebug::class));
+$application->add(container()->make(DbDump::class));
 
 $application->run();

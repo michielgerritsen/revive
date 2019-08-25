@@ -33,4 +33,11 @@ class InvalidConfigurationException extends \Exception
             'We are unable to parse the configuration file: ' . $message
         );
     }
+
+    public static function invalidEnvFile()
+    {
+        return new static(
+            'There seems to be no connection data in the app/etc/env.php file.'
+        );
+    }
 }

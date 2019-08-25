@@ -23,16 +23,21 @@ class Mysql
     public function testConnection($host, $port, $name, $user, $password)
     {
         try {
-            $dsn = 'mysql:host=' . $host . ';dbname=' . $name;
-
-            if ($port) {
-                $dsn .= ';port=' . $port;
-            }
-
-            new \PDO($dsn, $user, $password);
+            $this->getConnection($host, $port, $name, $user, $password);
             return true;
         } catch (\Exception $exception) {
             return false;
         }
+    }
+
+    public function getConnection($host, $port, $name, $user, $password)
+    {
+        $dsn = 'mysql:host=' . $host . ';dbname=' . $name;
+
+        if ($port) {
+            $dsn .= ';port=' . $port;
+        }
+
+        return new \PDO($dsn, $user, $password);
     }
 }
